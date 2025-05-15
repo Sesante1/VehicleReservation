@@ -1,0 +1,508 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+} */
+
+.car-detail-container {
+    /* max-width: 1500px; */
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.car-header {
+    /* display: flex;
+    justify-content: space-between;
+    align-items: center; */
+    margin-bottom: 20px;
+}
+
+.car-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* .car-rating {
+    display: flex;
+    align-items: center;
+} */
+
+.car-rating {
+    margin-top: 5px;
+    display: flex;
+    gap: 10px;
+}
+
+.car-rating .stars {
+    color: #ffb400;
+    margin-right: 5px;
+}
+
+.stars span {
+    font-size: 13px;
+    color: gray;
+    margin-left: 5px;
+}
+
+.location-info i {
+    margin-right: 5px;
+}
+
+.form-group label {
+    font-size: 15px;
+}
+
+.form-group input:focus-within {
+    border: 1.5px solid #2d79f3;
+}
+
+/* .car-gallery {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-gap: 10px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    overflow: hidden;
+} */
+
+.main-image {
+    grid-row: span 2;
+    height: 400px;
+}
+
+.thumbnail {
+    height: 195px;
+}
+
+/* .car-gallery img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+} */
+
+.car-details {
+    position: relative;
+    display: flex;
+    margin-bottom: 30px;
+    gap: 30px;
+    /* max-width: 1000px; */
+}
+
+.car-details span {
+    /* font-size: 14px; */
+    color: #666;
+}
+
+.car-info {
+    background: white;
+    border-radius: 8px;
+    flex: 2;
+    padding: 30px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.host-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.host-details {
+    position: relative;
+    width: 100%;
+}
+
+.report-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #f3f0f0;
+    padding: 5px 15px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.report-container i,
+.report-container span {
+    font-size: 13px;
+}
+
+.host-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.host-name {
+    font-weight: bold;
+}
+
+.member-since {
+    color: #666;
+    font-size: 14px;
+}
+
+.car-description {
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.car-features {
+    margin-bottom: 20px;
+}
+
+.features-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.feature-item i {
+    margin-right: 10px;
+    color: gray;
+}
+
+.feature-title {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.booking-panel {
+    top: 100px;
+    position: sticky;
+    width: 400px;
+    flex: 1;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    height: max-content;
+    z-index: 9999;
+}
+
+.price {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #2054dc;
+}
+
+.booking-panel input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.booking-panel p {
+    margin: auto;
+}
+
+.book-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #2054dc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    margin: 15px 0 20px 0;
+}
+
+.book-button:hover {
+    opacity: 0.9;
+}
+
+.reviews-section {
+    margin-top: 30px;
+}
+
+.review-item {
+    display: flex;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.reviewer-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.review-content {
+    flex: 1;
+}
+
+.reviewer-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.review-date {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.review-text {
+    line-height: 1.6;
+}
+
+.car-gallery-container {
+    width: 750px;
+    margin-bottom: 30px;
+}
+
+.main-image-container {
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+.main-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.thumbnails-container {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 5px;
+}
+
+.thumbnail {
+    width: 90px;
+    height: 60px;
+    flex-shrink: 0;
+    cursor: pointer;
+    border-radius: 4px;
+    overflow: hidden;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.thumbnail.active {
+    opacity: 1;
+    box-shadow: 0 0 0 2px #007bff;
+}
+
+.thumbnail:hover {
+    opacity: 1;
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.additional-features i {
+    color: #28a745;
+}
+
+/* Hide scrollbar but keep functionality */
+.thumbnails-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.thumbnails-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.thumbnails-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.thumbnails-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.car-details-container {
+    /* diri */
+    max-width: 750px;
+    height: max-content;
+}
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+.flex :first-child {
+    margin-bottom: 20px;
+    margin-top: 5px;
+}
+
+.flex .total {
+    color: black;
+    font-weight: bold;
+}
+
+.flex .total-amount {
+    color: black;
+}
+
+/* Modal */
+.bookOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    display: none;
+}
+
+.bookModal {
+    background: white;
+    width: 90%;
+    max-width: 650px;
+    max-height: 90vh;
+    border-radius: 8px;
+    padding: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: fadeInScale 0.3s ease;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.bookModal h2 {
+    margin-top: 0;
+}
+
+.bookModal p {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.bookContent {
+    overflow-y: auto;
+    flex-grow: 1;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding-right: 10px;
+}
+
+.bookContent p {
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.bookContent ul li {
+    font-size: 14px;
+    margin-bottom: 15px;
+    margin-left: 40px;
+}
+
+.bookContent ol li strong {
+    margin-bottom: 10px;
+    display: block;
+}
+
+.bookContent label {
+    display: block;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.bookButtons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.bookConfirm {
+    flex: 1;
+    background-color: #2054dc;
+    border: none;
+    padding: 10px;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.bookConfirm:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.bookCancel {
+    flex: 1;
+    background-color: rgb(54, 52, 52);
+    border: none;
+    padding: 10px;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+}
+
+ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+ul ul {
+    list-style-type: disc;
+}
+
+.bookCheckbox {
+    display: flex;
+    margin-bottom: 25px;
+}
+
+.bookCheckbox :first-child {
+    margin-right: 10px;
+}
+
+input[type="checkbox"] {
+    transform: scale(1.5);
+    /* increase size: 1 = normal, 1.5 = 150% */
+    /* optional spacing */
+}
