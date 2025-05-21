@@ -122,9 +122,9 @@ $conn->close();
                         <div class="host-details">
                             <div class="host-name">Hosted by <?= htmlspecialchars($car['host_fname'] . ' ' . $car['host_lname']) ?></div>
                             <div class="member-since">Member since <?= htmlspecialchars($car['member_since']) ?></div>
-                            <div class="report-container">
+                            <!-- <div class="report-container">
                                 <i class="fa-regular fa-flag"></i><span>&nbsp; &nbsp; &nbsp;Report</span>
-                            </div>
+                            </div> -->
                             <div class="contact-host">
                                 <a href="/chat?user_id=<?php echo htmlspecialchars($car['unique_id']); ?>">
                                     <i class="fa-regular fa-comment"></i>

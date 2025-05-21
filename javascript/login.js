@@ -45,7 +45,7 @@
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
         const data = xhr.response;
         if (data === "success") {
-          location.href = "/";
+          location.href = "admin.php";
         } else {
           errorText.style.display = "block";
           errorText.textContent = data;

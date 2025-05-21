@@ -1,0 +1,47 @@
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+
+#     # If the requested file or directory exists, serve it
+#     RewriteCond %{REQUEST_FILENAME} !-f
+#     RewriteCond %{REQUEST_FILENAME} !-d
+
+#     # Otherwise, route to index.php (or admin.php if on admin path)
+#     RewriteRule ^admin/?(.*)$ admin.php [QSA,L]
+#     RewriteRule ^.*$ index.php [QSA,L]
+# </IfModule>
+
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+
+#     # Handle admin routes - anything starting with /admin should go to admin.php
+#     RewriteCond %{REQUEST_URI} ^/admin
+#     RewriteCond %{REQUEST_FILENAME} !-f
+#     RewriteCond %{REQUEST_FILENAME} !-d
+#     RewriteRule ^admin/?(.*)$ admin.php [QSA,L]
+
+#     # Handle static files (CSS, JS, images, etc.)
+#     RewriteCond %{REQUEST_FILENAME} -f
+#     RewriteRule . - [L]
+
+#     # Handle directories
+#     RewriteCond %{REQUEST_FILENAME} -d
+#     RewriteRule . - [L]
+
+#     # Handle all other routes with index.php
+#     RewriteCond %{REQUEST_FILENAME} !-f
+#     RewriteCond %{REQUEST_FILENAME} !-d
+#     RewriteRule ^.*$ index.php [QSA,L]
+# </IfModule>
+
+# Enable rewrite engine
+RewriteEngine On
+
+# Admin path handling
+RewriteRule ^admin$ admin.php [L]
+RewriteRule ^dashboard$ admin.php [L]
+RewriteRule ^pendingUsers$ admin.php [L]
+
+# Handle other client-side routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L,QSA]

@@ -65,7 +65,7 @@ a {
 } */
 
 nav {
-  padding: 10px 70px;
+  padding: 10px 200px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -153,6 +153,18 @@ nav ul li a:hover {
   border-radius: 4px;
   z-index: 1;
   display: none;
+  text-align: center;
+  padding: 15px 0;
+  z-index: 10000;
+}
+
+.button-dropdown {
+  padding: 10px 0;
+  display: block;
+}
+
+.button-dropdown:hover {
+  background: #e5e7eb;
 }
 
 .dropdown-content.show {
@@ -177,6 +189,66 @@ nav ul li a:hover {
   color: #2054dc;
 }
 
+/* .button-container .login {
+  --primary-color: #2054dc;
+  --secondary-color: #fff;
+  --hover-color: #111;
+  --arrow-width: 10px;
+  --arrow-stroke: 2px;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 30px;
+  color: var(--secondary-color);
+  padding: 1em 1.8em;
+  background: var(--primary-color);
+  display: flex;
+  transition: 0.2s background;
+  align-items: center;
+  gap: 0.6em;
+  font-weight: bold;
+}
+
+.button-container .login .arrow-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-container .login .arrow {
+  margin-top: 1px;
+  width: var(--arrow-width);
+  background: var(--primary-color);
+  height: var(--arrow-stroke);
+  position: relative;
+  transition: 0.2s;
+}
+
+.button-container .login .arrow::before {
+  content: "";
+  box-sizing: border-box;
+  position: absolute;
+  border: solid var(--secondary-color);
+  border-width: 0 var(--arrow-stroke) var(--arrow-stroke) 0;
+  display: inline-block;
+  top: -3px;
+  right: 3px;
+  transition: 0.2s;
+  padding: 3px;
+  transform: rotate(-45deg);
+}
+
+.button-container .login:hover {
+  background-color: var(--hover-color);
+}
+
+.button-container .login:hover .arrow {
+  background: var(--secondary-color);
+}
+
+.button-container .login:hover .arrow:before {
+  right: 0;
+} */
+
 .button-container .signup {
   background: #2054dc;
   color: white;
@@ -192,9 +264,9 @@ nav ul li a:hover {
   gap: 10px;
 }
 
-.right-side-container .profile:hover {
+/* .right-side-container .profile:hover {
   background: #dddfe2;
-}
+} */
 
 .right-side-container img {
   object-fit: cover;

@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require '../php/config.php'; 
+require '../php/config.php';
 
 $user_id = $_SESSION['user_id'];
 
@@ -26,7 +26,7 @@ $sql = "
     JOIN cars c ON b.car_id = c.id
     JOIN users u ON b.user_id = u.user_id 
     LEFT JOIN car_images ci ON c.id = ci.car_id AND ci.is_primary = 1
-    WHERE c.user_id = ? AND b.status = 'pending'
+    WHERE c.user_id = ? AND b.status IN ('pending', 'confirmed')
     ORDER BY b.created_at DESC
 ";
 
@@ -57,4 +57,3 @@ while ($row = $result->fetch_assoc()) {
 
 header('Content-Type: application/json');
 echo json_encode($bookings);
-?>

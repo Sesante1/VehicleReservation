@@ -7,7 +7,6 @@
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
-
 <body>
     <form id="AddCarForm" class="add-form" method="POST" enctype="multipart/form-data">
         <h3>Basic Information</h3>
@@ -142,6 +141,49 @@
                     <li>Include exterior (front, back, sides) and interior views</li>
                     <li>Make sure the car is clean and the background is not cluttered</li>
                     <li>Highlight any special features or unique aspects</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- OR (Official Receipt) Upload Section -->
+        <div class="document-uploader add-container" id="or-uploader">
+            <h4>Official Receipt (OR)</h4>
+            <p>Upload a clear image of your car's Official Receipt</p>
+
+            <div class="image-gallery" id="or-image-gallery">
+                <div class="add-image-container" id="or-add-image-btn">
+                    <div class="add-icon">+</div>
+                    <div class="add-text">Add OR Image</div>
+                </div>
+            </div>
+
+            <input type="file" id="or-file-input" class="file-input" accept="image/*" style="display: none;">
+
+            <div class="upload-count" id="or-upload-count">0 of 1 image selected</div>
+        </div>
+
+        <!-- CR (Certificate of Registration) Upload Section -->
+        <div class="document-uploader add-container" id="cr-uploader">
+            <h4>Certificate of Registration (CR)</h4>
+            <p>Upload a clear image of your car's Certificate of Registration</p>
+
+            <div class="image-gallery" id="cr-image-gallery">
+                <div class="add-image-container" id="cr-add-image-btn">
+                    <div class="add-icon">+</div>
+                    <div class="add-text">Add CR Image</div>
+                </div>
+            </div>
+
+            <input type="file" id="cr-file-input" class="file-input" accept="image/*" style="display: none;">
+
+            <div class="upload-count" id="cr-upload-count">0 of 1 image selected</div>
+            <div class="tips">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <h5>Tips for CR and OR photo:</h5>
+                <ul>
+                    <li>Ensure the entire document is visible and readable</li>
+                    <li>Use good lighting to avoid shadows</li>
+                    <li>Keep the image straight and in focus</li>
                 </ul>
             </div>
         </div>

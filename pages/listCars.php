@@ -11,7 +11,7 @@ include_once "../php/config.php";
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 
-<body>
+<!-- <body> -->
     <div class="flex">
         <div>
             <div class="profile-nav">
@@ -38,12 +38,12 @@ include_once "../php/config.php";
                 </div>
             </div>
 
-            <div class="quick-link-card">
+            <!-- <div class="quick-link-card">
                 <h4>Quick Links</h4>
                 <a class="quick-link"><i class="fas fa-cog"></i> Account Settings</a>
                 <a class="quick-link"><i class="fas fa-credit-card"></i> Payment Methods</a>
                 <a class="quick-link"><i class="fas fa-question-circle"></i> Help Center</a>
-            </div>
+            </div> -->
         </div>
 
         <div class="myCar content_box">
@@ -78,17 +78,17 @@ include_once "../php/config.php";
 
             <div id="content3" class="content">
                 <h3>Pending Request</h3>
-
                 <div class="scroll-box" id="booking-request-list"></div>
-
             </div>
 
             <div id="content4" class="content">
                 <h3>Completed</h3>
+                <div class="scroll-box" id="completed-booking-list"></div>
             </div>
 
             <div id="content5" class="content">
                 <h3>Cancelled</h3>
+                <div class="scroll-box" id="cancelled-booking-list"></div>
             </div>
 
         </div>
@@ -153,6 +153,6 @@ include_once "../php/config.php";
         </div>
 
         <script src="../javascript/list-cars.js"></script>
-</body>
+<!-- </body> -->
 
 </html>

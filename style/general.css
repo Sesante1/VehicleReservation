@@ -361,7 +361,9 @@ form {
 .profile-nav {
     border-radius: 10px;
     width: 300px;
-    height: max-content;
+    /* height: max-content; */
+    height: 100%;
+    margin-bottom: 10px;
     background-color: white;
     display: flex;
     flex-direction: column;
@@ -720,11 +722,15 @@ textarea:focus {
 }
 
 .car-uploader h4,
-.car-uploader p {
+.car-uploader p,
+.document-uploader h4,
+.document-uploader p {
     margin-bottom: 10px;
 }
 
-.car-uploader p {
+.car-uploader p,
+.document-uploader p
+{
     font-size: 14px;
 }
 
@@ -1115,6 +1121,28 @@ input[type="checkbox"] {
     font-size: 0.8rem;
     border-radius: 4px;
     margin-bottom: 0.5rem;
+}
+
+.cancelled-status {
+    /* background: #e42929;
+    color: #fff;  */
+    color: #e42929;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    float: right;
+}
+
+.request-return-btn {
+    background: transparent;
+    /* border: 1px solid #0069d9; */
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .request-total {

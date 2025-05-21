@@ -56,7 +56,6 @@ include_once 'php/singup_google.php';
       </div>
     </form>
     <div class="link">Already signed up? <a href="/login">Login now</a></div>
-    <div class="link">Don't have an account? <a href="/signup">Signup</a></div>
             <div class="social-message">
                 <div class="line"></div>
                 <p class="message">Signup with google</p>
