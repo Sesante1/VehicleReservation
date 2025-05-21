@@ -1,5 +1,4 @@
 <?php
-// Database connection (adjust your connection details)
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -12,7 +11,6 @@ try {
     die("Connection failed: " . $e->getMessage());
 }
 
-// Handle AJAX requests for approve/decline actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     header('Content-Type: application/json');
 
@@ -49,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['get_car_details'])) {
     $car_id = (int)$_GET['car_id'];
 
     try {
-        // Get car details with user information
         $stmt = $pdo->prepare("
             SELECT c.*, u.fname, u.lname, u.email, u.img as user_img
             FROM cars c
@@ -64,17 +61,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['get_car_details'])) {
             exit;
         }
 
-        // Get car images
         $stmt = $pdo->prepare("SELECT * FROM car_images WHERE car_id = ? ORDER BY is_primary DESC");
         $stmt->execute([$car_id]);
         $car_images = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Get car documents
         $stmt = $pdo->prepare("SELECT * FROM car_documents WHERE car_id = ?");
         $stmt->execute([$car_id]);
         $car_documents = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Decode features JSON
         $car['features'] = json_decode($car['features'], true);
 
         echo json_encode([
@@ -89,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['get_car_details'])) {
     exit;
 }
 
-// Fetch pending cars with user information
+
 try {
     $stmt = $pdo->prepare("
         SELECT c.id, c.make, c.model, c.year, c.created_at, c.verified,

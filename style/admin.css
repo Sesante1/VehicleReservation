@@ -593,9 +593,16 @@ body {
 /* MAIN */
 /* CONTENT */
 
+/* TAB CONTENT */
+.tab-content {
+	display: none;
+}
 
+.tab-content.active {
+	display: block;
+}
 
-
+/* TAB CONTENT */
 
 
 

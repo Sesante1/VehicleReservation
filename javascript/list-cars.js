@@ -273,9 +273,9 @@ function closeCancelBookingModal() {
                             <div class="car-image-container">
                                 <img src="/php/car-images/${car.car_id}/${car.image_path}" alt="${car.make} ${car.model}">
                                 ${isActive
-                                    ? `<div class="status-badge-active">Active</div>`
-                                    : `<div class="status-badge-maintenance">Maintenance</div>`
-                                }
+                            ? `<div class="status-badge-active">Active</div>`
+                            : `<div class="status-badge-maintenance">Maintenance</div>`
+                        }
                             </div>
                             <div class="my-content">
                                 <div class="my-car-title">${car.make} ${car.model} (${car.year})</div>
@@ -291,9 +291,9 @@ function closeCancelBookingModal() {
                             </div>
                             <div class="actions">
                                 ${isActive
-                                    ? `<button class="set-maintenance" data-id="${car.car_id}">Set to Maintenance</button>`
-                                    : `<button class="set-active" data-id="${car.car_id}">Set to Active</button>`
-                                }
+                            ? `<button class="set-maintenance" data-id="${car.car_id}">Set to Maintenance</button>`
+                            : `<button class="set-active" data-id="${car.car_id}">Set to Active</button>`
+                        }
                                 <button class="view-details">
                                     <a href="/car-details?id=${car.car_id}" onclick="route()">View Details</a>
                                 </button>
