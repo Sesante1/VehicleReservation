@@ -1,5 +1,5 @@
 <!-- <?php
-        require '../php/config.php'; 
+        require '../php/config.php';
 
         $sql = "SELECT 
             cars.id AS car_id,
@@ -62,31 +62,11 @@
                 </div>
             </form>
         </div>
-        <!-- <div class="car-container">
-            <?php foreach ($cars as $car): ?>
-                <a href="/car-details?id=<?= htmlspecialchars($car['car_id']) ?>" class="car-link">
-                    <div class="car-card">
-                        <div class="car-image">
-                            <img src="/php/car-images/<?= htmlspecialchars($car['car_id']) ?>/<?= htmlspecialchars($car['image_path']) ?>" alt="<?= htmlspecialchars($car['make'] . ' ' . $car['model']) ?>">
-                            <div class="price-tag">₱<?= htmlspecialchars($car['daily_rate']) ?>/day</div>
-                        </div>
-                        <div class="car-info">
-                            <div class="car-title-container">
-                                <h2 class="car-title"><?= htmlspecialchars($car['make']) . ' ' . htmlspecialchars($car['model']) ?></h2>
-                            </div>
-                            <p class="location"><i class="fa-solid fa-location-dot"></i> <?= htmlspecialchars($car['location']) ?></p>
-                            <div class="car-details">
-                                <span><i class="fa-solid fa-users"></i> <?= htmlspecialchars($car['seats']) ?> seats</span>
-                                <span><i class="fa-solid fa-gear"></i> <?= htmlspecialchars($car['transmission']) ?></span>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            <?php endforeach; ?>
-        </div> -->
+
         <div class="car-container" id="car-container">
 
         </div>
+
         <?php
         include "../footer.php";
         ?>
@@ -151,4 +131,5 @@
     </script>
 
 </body>
+
 </html>

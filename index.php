@@ -24,6 +24,7 @@ include_once "php/config.php";
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <!-- <link rel="stylesheet" href="../style/view-datails.css"> -->
 
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
     <script src="javascript/router.js"></script>
 
     <style>
@@ -168,7 +169,7 @@ include_once "php/config.php";
     </style>
 </head>
 
-<body class="">
+<body>
     <nav>
         <div class="logo">
             <a href="/landingPage" onclick="route()">
@@ -219,11 +220,11 @@ include_once "php/config.php";
             </div>
         </div>
     </nav>
-
+    
     <div class="main-container" id="main-page">
 
     </div>
-
+ 
     <div popover id="myPopover" class="wrapper">
         <section class="users">
             <header>

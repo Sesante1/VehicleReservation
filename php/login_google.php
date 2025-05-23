@@ -7,8 +7,8 @@ use Google\Client;
 use Google\Service\Oauth2;
 
 $client = new Client();
-$client->setClientId('your_client_id.apps.googleusercontent.com');
-$client->setClientSecret('client_secret');
+$client->setClientId('your-client-id.apps.googleusercontent.com');
+$client->setClientSecret('your-client-secret');
 $client->setRedirectUri('http://localhost:3000/login');
 $client->addScope('email');
 $client->addScope('profile');

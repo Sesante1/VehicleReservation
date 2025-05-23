@@ -149,36 +149,6 @@ function closeCancelBookingModal() {
         modal.style.display = "flex";
     }
 
-    // function openBookingStatusModal(bookingId, statusType) {
-    //     const modal = document.getElementById("carStatusModal");
-    //     const confirmBtn = document.getElementById("modalConfirmBtn");
-
-    //     const title = statusType === 'confirmed' ? 'Approve Booking' : 'Update Booking Status';
-    //     const description = statusType === 'confirmed'
-    //         ? 'Are you sure you want to approve this booking? Approving will mark this booking as confirmed.'
-    //         : 'Are you sure you want to change this booking\'s status?';
-
-    //     document.getElementById('modalTitle').textContent = title;
-    //     document.getElementById('modalDescription').textContent = description;
-    //     confirmBtn.textContent = statusType === 'confirmed' ? 'Confirm' : 'Continue';
-
-    //     confirmBtn.classList.remove('btn-green', 'btn-orange');
-    //     if (statusType === 'confirmed') {
-    //         confirmBtn.classList.add('btn-green');
-    //     } else {
-    //         confirmBtn.classList.add('btn-orange');
-    //     }
-
-    //     const newConfirmBtn = confirmBtn.cloneNode(true);
-    //     confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-
-    //     newConfirmBtn.addEventListener('click', () => {
-    //         updateBookingStatus(bookingId, statusType);
-    //         closeModal();
-    //     });
-
-    //     modal.style.display = "flex";
-    // }
     function openBookingStatusModal(bookingId, statusType) {
         const modal = document.getElementById("carStatusModal");
         const confirmBtn = document.getElementById("modalConfirmBtn");
@@ -264,6 +234,18 @@ function closeCancelBookingModal() {
             .then(cars => {
                 container.innerHTML = '';
 
+                if (cars.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-cars-container">
+                            <div class="no-cars-icon">🚗</div>
+                            <div class="co-cars-heading">No cars listed</div>
+                            <div class="no-cars-description">You haven't listed any cars for rent yet.</div>
+                            <button class="no-cars-btn" onclick="window.location.href='/listCar'">List Your First Car</button>
+                        </div>
+                    `;
+                    return;
+                }
+
                 cars.forEach(car => {
                     const earnings = typeof car.earnings === 'number' && !isNaN(car.earnings) ? car.earnings : 0;
                     const isActive = car.is_active == 1;
@@ -306,13 +288,6 @@ function closeCancelBookingModal() {
                     `;
                 });
 
-                // container.querySelectorAll('.set-active').forEach(btn => {
-                //     btn.addEventListener('click', () => updateCarStatus(btn.dataset.id, 1));
-                // });
-
-                // container.querySelectorAll('.set-maintenance').forEach(btn => {
-                //     btn.addEventListener('click', () => updateCarStatus(btn.dataset.id, 0));
-                // });
                 container.querySelectorAll('.set-active').forEach(btn => {
                     btn.addEventListener('click', () => {
                         openStatusModal('active', btn.dataset.id);
@@ -412,6 +387,18 @@ function closeCancelBookingModal() {
                 const list = document.getElementById('my-booking-list');
                 list.innerHTML = '';
 
+                if (bookings.length === 0) {
+                    list.innerHTML = `
+                        <div class="no-cars-container">
+                            <div class="no-cars-icon">🚗</div>
+                            <div class="co-cars-heading">No Booking listed</div>
+                            <div class="no-cars-description">You haven't booked any cars yet.</div>
+                            <button class="no-cars-btn" onclick="window.location.href='/'">Book now</button>
+                        </div>
+                    `;
+                    return;
+                }
+
                 bookings.forEach(booking => {
 
                     const isPending = booking.booking_status === 'Pending';
@@ -429,8 +416,12 @@ function closeCancelBookingModal() {
                                             <div class="booking-dates"><strong>Dates:</strong> ${booking.start_date} - ${booking.end_date}</div>
                                             <div class="booking-price"><strong>Total Price:</strong> ₱${booking.total_price}</div>
                                             <div class="booking-actions">
-                                                <p><i class="fa-regular fa-clock"></i></i>Car owner responds within an hour</p>
-                                                <a href="/chat?user_id=${booking.owner_unique_id}">Contact Host</a>
+                                                <div>
+
+                                                    <p><i class="fa-regular fa-clock"></i></i>Car owner responds within an hour</p>
+                                                    <a href="/chat?user_id=${booking.owner_unique_id}"><i class="fa-solid fa-phone-volume"></i>&nbsp;&nbsp;Contact owner</a>
+                                                </div>
+                                                
                                                 <div>
                                                     <a href="/car-details?id=${booking.car_id}">View Car Details</a>
                                                     <span class="cancel-booking" data-id="${booking.booking_id}" onclick="openCancelBookingModal(this)">Cancel Booking</span>
@@ -453,6 +444,18 @@ function closeCancelBookingModal() {
                 const list = document.getElementById('cancelled-booking-list');
                 list.innerHTML = '';
 
+                if (bookings.length === 0) {
+                    list.innerHTML = `
+                        <div class="no-cars-container">
+                            <div class="no-cars-icon">🚗</div>
+                            <div class="co-cars-heading">No Booking listed</div>
+                            <div class="no-cars-description">You haven't booked any cars yet.</div>
+                            <button class="no-cars-btn" onclick="window.location.href='/'">Book now</button>
+                        </div>
+                    `;
+                    return;
+                }
+
                 bookings.forEach(booking => {
 
                     const isPending = booking.booking_status === 'Pending';
@@ -470,7 +473,7 @@ function closeCancelBookingModal() {
                                             <div class="booking-dates"><strong>Dates:</strong> ${booking.start_date} - ${booking.end_date}</div>
                                             <div class="booking-price"><strong>Total Price:</strong> ₱${booking.total_price}</div>
                                             <div class="booking-actions">
-                                                <a href="/chat?user_id=${booking.owner_unique_id}">Contact Host</a>
+                                                <a href="/chat?user_id=${booking.owner_unique_id}"><i class="fa-solid fa-phone-volume"></i>&nbsp;&nbsp;Contact Host</a>
                                                 <div>
                                                     <a href="/car-details?id=${booking.car_id}">View Car Details</a>
                                                 </div>
@@ -492,6 +495,18 @@ function closeCancelBookingModal() {
                 const list = document.getElementById('completed-booking-list');
                 list.innerHTML = '';
 
+                if (bookings.length === 0) {
+                    list.innerHTML = `
+                        <div class="no-cars-container">
+                            <div class="no-cars-icon">🚗</div>
+                            <div class="co-cars-heading">No Booking listed</div>
+                            <div class="no-cars-description">You haven't booked any cars yet.</div>
+                            <button class="no-cars-btn" onclick="window.location.href='/'">Book now</button>
+                        </div>
+                    `;
+                    return;
+                }
+
                 bookings.forEach(booking => {
 
                     const isPending = booking.booking_status === 'Pending';
@@ -509,9 +524,9 @@ function closeCancelBookingModal() {
                                             <div class="booking-dates"><strong>Dates:</strong> ${booking.start_date} - ${booking.end_date}</div>
                                             <div class="booking-price"><strong>Total Price:</strong> ₱${booking.total_price}</div>
                                             <div class="booking-actions">
-                                                <a href="#">Leave a review</a>
+                                                <a href="#"><i class="fa-regular fa-star"></i>&nbsp;&nbsp;Leave a review</a>
                                                 <div>
-                                                    <a href="#">Rent again</a>
+                                                    <a href="/car-details?id=${booking.car_id}">Rent again</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -532,10 +547,17 @@ function closeCancelBookingModal() {
                 const container = document.getElementById('booking-request-list');
                 container.innerHTML = '';
 
-                // if (requests.length === 0) {
-                //     container.innerHTML = '<p>No booking requests found.</p>';
-                //     return;
-                // }
+                if (requests.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-cars-container">
+                            <div class="no-cars-icon">🚗</div>
+                            <div class="co-cars-heading">No Booking listed</div>
+                            <div class="no-cars-description">You haven't booked any cars yet.</div>
+                            <button class="no-cars-btn" onclick="window.location.href='/'">Book now</button>
+                        </div>
+                    `;
+                    return;
+                }
 
                 requests.forEach(request => {
                     container.innerHTML += `
@@ -545,7 +567,7 @@ function closeCancelBookingModal() {
                                 </div>
                                 <div class="request-info">
                                     <h3 class="request-title">${request.make} ${request.model}</h3>
-                                    <p class="request-dates"><i class="fa-solid fa-calendar-week"></i>&nbsp;${request.start_date} to ${request.end_date}</p>
+                                    <p class="request-dates"><i class="fa-solid fa-calendar-week"></i>&nbsp;&nbsp;Pick up: &nbsp;${request.start_date} to &nbsp;<i class="fa-solid fa-calendar-week"></i>&nbsp;&nbsp;Return:&nbsp;&nbsp;${request.end_date}</p>
                                     <div class="request-user">
                                         <img src="php/images/${request.user_image || 'default-user.png'}" alt="User" class="request-avatar" />
                                         <div class="request-user-details">

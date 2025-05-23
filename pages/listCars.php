@@ -9,10 +9,55 @@ include_once "../php/config.php";
 <head>
     <link rel="stylesheet" href="style/general.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        .no-cars-container {
+            text-align: center;
+            color: #444;
+
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+
+        }
+
+        .no-cars-icon {
+            font-size: 40px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        .no-casrs-heading {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .no-cars-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .no-cars-btn {
+            background-color: #1a56db;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .no-cars-btn:hover {
+            background-color: #1449c3;
+        }
+    </style>
 </head>
 
 <!-- <body> -->
-<div class="flex">
+<div class="flex list-cars-container">
     <div>
         <div class="profile-nav">
             <?php
@@ -37,17 +82,10 @@ include_once "../php/config.php";
                 <!-- <i class="fa-solid fa-user"></i> -->
             </div>
         </div>
-
-        <!-- <div class="quick-link-card">
-                <h4>Quick Links</h4>
-                <a class="quick-link"><i class="fas fa-cog"></i> Account Settings</a>
-                <a class="quick-link"><i class="fas fa-credit-card"></i> Payment Methods</a>
-                <a class="quick-link"><i class="fas fa-question-circle"></i> Help Center</a>
-            </div> -->
     </div>
 
     <div class="myCar content_box">
-        <div id="content1" class="content active">
+        <div id="content1" class="content active" style="position: relative;">
             <h3>My Bookings</h3>
 
             <div class="scroll-box" id="my-booking-list">
@@ -70,23 +108,24 @@ include_once "../php/config.php";
 
         </div>
 
-        <div id="content2" class="content">
+        <div id="content2" class="content" style="position: relative;">
             <h3>My Cars</h3>
             <a href="/listCar"><button class="add-car">List a New Car</button></a>
+
             <div class="car-flex scroll-box" id="my-car-list"></div>
         </div>
 
-        <div id="content3" class="content">
+        <div id="content3" class="content" style="position: relative;">
             <h3>Pending Request</h3>
             <div class="scroll-box" id="booking-request-list"></div>
         </div>
 
-        <div id="content4" class="content">
+        <div id="content4" class="content" style="position: relative;">
             <h3>Completed</h3>
             <div class="scroll-box" id="completed-booking-list"></div>
         </div>
 
-        <div id="content5" class="content">
+        <div id="content5" class="content" style="position: relative;">
             <h3>Cancelled</h3>
             <div class="scroll-box" id="cancelled-booking-list"></div>
         </div>

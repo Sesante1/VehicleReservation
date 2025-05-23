@@ -13,10 +13,10 @@ if (!isset($_SESSION['unique_id'])) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
 </head>
 
-<body class="outer-body">
+<!-- <body> -->
   <div class="chat-wrapper">
     <section class="chat-area">
-      <header>
+      <div class="chat-header">
         <?php
         $user_id = mysqli_real_escape_string($conn, $_GET['user_id']);
         $sql = mysqli_query($conn, "SELECT * FROM users WHERE unique_id = {$user_id}");
@@ -26,25 +26,19 @@ if (!isset($_SESSION['unique_id'])) {
           header("location: users.php");
         }
         ?>
-        <!-- <a href="/" class="back-icon"><i class="fas fa-arrow-left"></i></a> -->
         <div class="userprofile-container">
           <img src="php/images/<?php echo $row['img']; ?>" alt="">
-          <div class="green-dot"></div>
+          <?php
+            if ($row['status'] == "Active now") {
+              echo "<div class='green-dot'></div>";
+            } 
+          ?>
         </div>
         <div class="details">
           <span><?php echo $row['fname'] . " " . $row['lname'] ?></span>
           <p><?php echo $row['status']; ?></p>
         </div>
-        <!-- <?php if ($row['status'] === "Active now"): ?>
-          <div class="online-status-container">
-            Active now
-          </div>
-        <?php else: ?>
-          <div class="offline-status-container">
-            Offline
-          </div>
-        <?php endif; ?> -->
-      </header>
+      </div>
       <div class="chat-box">
 
       </div>
@@ -76,6 +70,6 @@ if (!isset($_SESSION['unique_id'])) {
 
   <script src="javascript/chat.js"></script>
 
-</body>
+<!-- </body> -->
 
 </html>

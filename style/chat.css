@@ -25,7 +25,11 @@
     max-width: 800px;
     border-radius: 16px;
     border: 1px solid #eeecec;
-    align-self: center;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .userprofile-container {
@@ -51,7 +55,7 @@
     border-radius: 50%;
 }
 
-.chat-area header .details span {
+.chat-area .chat-header .details span {
     font-size: 17px;
     font-weight: 500;
 }
@@ -125,30 +129,30 @@
 }
 
 
-.chat-area header {
+.chat-area .chat-header {
     display: flex;
     align-items: center;
     padding: 18px 30px;
     position: relative;
 }
 
-.chat-area header .back-icon {
+.chat-area .chat-header .back-icon {
     color: #333;
     font-size: 18px;
 }
 
-.chat-area header img {
+.chat-area .chat-header img {
     height: 45px;
     width: 45px;
     margin: 0 15px;
 }
 
-.chat-area header .details span {
+.chat-area .chat-header .details span {
     font-size: 17px;
     font-weight: 500;
 }
 
-.chat-area header .details p {
+.chat-area .chat-header .details p {
     font-size: 14px;
     font-weight: 500;
 }

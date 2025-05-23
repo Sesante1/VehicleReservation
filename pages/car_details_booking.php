@@ -379,6 +379,272 @@ $conn->close();
                 });
         }
 
+        // window.carDailyRate = <?= json_encode($car['daily_rate']) ?>;
+
+        // (function() {
+        //     function initPriceCalculator() {
+        //         const moduleId = 'price-calculation';
+
+        //         if (!document.getElementById(moduleId)) return;
+
+        //         const pickupDateInput = document.getElementById('pickup_date');
+        //         const returnDateInput = document.getElementById('return_date');
+        //         const totalContainer = document.getElementById('total-container');
+        //         const daysCountElement = document.getElementById('days-count');
+        //         const subtotalElement = document.getElementById('subtotal');
+        //         const totalAmountElement = document.getElementById('total-amount');
+        //         const dailyRate = window.carDailyRate || 0;
+
+        //         function updatePriceCalculation() {
+        //             if (pickupDateInput.value && returnDateInput.value) {
+        //                 const pickupDate = new Date(pickupDateInput.value);
+        //                 const returnDate = new Date(returnDateInput.value);
+
+        //                 if (returnDate > pickupDate) {
+        //                     const diffTime = Math.abs(returnDate - pickupDate);
+        //                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        //                     daysCountElement.textContent = diffDays;
+        //                     const subtotal = diffDays * dailyRate;
+
+        //                     document.getElementById('booking-form').dataset.totalPrice = subtotal;
+
+        //                     subtotalElement.textContent = '₱' + subtotal.toLocaleString();
+        //                     totalAmountElement.textContent = '₱' + subtotal.toLocaleString();
+        //                     totalContainer.style.display = 'block';
+
+        //                     if (pickupDateInput.value && returnDateInput.value) {
+        //                         checkCarAvailability();
+        //                     }
+        //                 } else {
+        //                     totalContainer.style.display = 'none';
+        //                 }
+        //             } else {
+        //                 totalContainer.style.display = 'none';
+        //             }
+        //         }
+
+        //         pickupDateInput.addEventListener('change', updatePriceCalculation);
+        //         returnDateInput.addEventListener('change', updatePriceCalculation);
+        //         updatePriceCalculation();
+
+        //         return function cleanup() {
+        //             pickupDateInput.removeEventListener('change', updatePriceCalculation);
+        //             returnDateInput.removeEventListener('change', updatePriceCalculation);
+        //         };
+        //     }
+
+        //     function validateBookingForm() {
+        //         const pickupDateInput = document.getElementById('pickup_date');
+        //         const returnDateInput = document.getElementById('return_date');
+
+        //         if (!pickupDateInput.value || !returnDateInput.value) {
+        //             showBookingMessage('Please select both pickup and return dates', 'error');
+        //             return false;
+        //         }
+
+        //         const pickupDate = new Date(pickupDateInput.value);
+        //         const returnDate = new Date(returnDateInput.value);
+
+        //         if (returnDate <= pickupDate) {
+        //             showBookingMessage('Return date must be after pickup date', 'error');
+        //             return false;
+        //         }
+
+        //         const bookingForm = document.getElementById('booking-form');
+        //         const totalPrice = parseFloat(bookingForm.dataset.totalPrice || 0);
+
+        //         if (totalPrice <= 0) {
+        //             showBookingMessage('Please select valid booking dates to calculate price', 'error');
+        //             return false;
+        //         }
+
+        //         return true;
+        //     }
+
+        //     function checkCarAvailability(callback) {
+        //         const carId = document.querySelector('input[name="car_id"]').value;
+        //         const pickupDate = document.getElementById('pickup_date').value;
+        //         const returnDate = document.getElementById('return_date').value;
+
+        //         showBookingMessage('Checking car availability...', 'info');
+
+        //         fetch(`/php/book-car.php?check_availability=1&car_id=${carId}&pickup_date=${pickupDate}&return_date=${returnDate}`)
+        //             .then(response => response.json())
+        //             .then(data => {
+        //                 if (data.success) {
+        //                     if (data.available) {
+        //                         if (callback) callback();
+        //                     } else {
+        //                         showBookingMessage('This car is not available for the selected dates', 'error');
+        //                     }
+        //                 } else {
+        //                     showBookingMessage(data.message || 'Error checking availability', 'error');
+        //                 }
+        //             })
+        //             .catch(error => {
+        //                 console.error('Error:', error);
+        //                 showBookingMessage('An error occurred while checking availability', 'error');
+        //             });
+        //     }
+
+        //     function openModal() {
+        //         if (validateBookingForm()) {
+        //             checkCarAvailability(function() {
+        //                 document.querySelector('.bookOverlay').style.display = 'flex';
+        //             });
+        //         }
+        //     }
+
+        //     function closeModal() {
+        //         document.querySelector('.bookOverlay').style.display = 'none';
+        //     }
+
+        //     function initBookingForm() {
+        //         const bookingForm = document.querySelector('.booking-panel form');
+        //         if (!bookingForm) return;
+
+        //         bookingForm.id = 'booking-form';
+
+        //         // Remove the default form submission to prevent conflicts
+        //         bookingForm.onsubmit = function(e) {
+        //             e.preventDefault();
+        //         };
+
+        //         const reserveButton = bookingForm.querySelector('.book-button');
+        //         reserveButton.type = 'button';
+        //         reserveButton.onclick = openModal;
+
+        //         const confirmButton = document.getElementById('submitBtn');
+        //         confirmButton.addEventListener('click', function() {
+        //             submitBooking();
+        //         });
+
+        //         const termsCheckbox = document.getElementById('termsCheckbox');
+        //         termsCheckbox.addEventListener('change', function() {
+        //             document.getElementById('submitBtn').disabled = !this.checked;
+        //         });
+
+        //         document.querySelector('.bookOverlay').style.display = 'none';
+        //     }
+
+        //     function submitBooking() {
+        //         const bookingForm = document.getElementById('booking-form');
+        //         const pickupDateInput = document.getElementById('pickup_date');
+        //         const returnDateInput = document.getElementById('return_date');
+        //         const totalPrice = parseFloat(bookingForm.dataset.totalPrice || 0);
+        //         const termsCheckbox = document.getElementById('termsCheckbox');
+
+        //         const submitButton = document.getElementById('submitBtn');
+        //         const originalButtonText = submitButton.textContent;
+        //         submitButton.textContent = 'Processing...';
+        //         submitButton.disabled = true;
+
+        //         // Prepare form data
+        //         const formData = new FormData();
+        //         formData.append('car_id', document.querySelector('input[name="car_id"]').value);
+        //         formData.append('pickup_date', pickupDateInput.value);
+        //         formData.append('return_date', returnDateInput.value);
+        //         formData.append('total_price', totalPrice);
+        //         formData.append('has_agreed', termsCheckbox.checked);
+
+        //         // Debug what's being sent
+        //         console.log('Sending booking data:', {
+        //             car_id: document.querySelector('input[name="car_id"]').value,
+        //             pickup_date: pickupDateInput.value,
+        //             return_date: returnDateInput.value,
+        //             total_price: totalPrice,
+        //             has_agreed: termsCheckbox.checked
+        //         });
+
+        //         recordAgreement(function() {
+        //             fetch('/php/book-car.php', {
+        //                     method: 'POST',
+        //                     body: formData
+        //                 })
+        //                 .then(response => response.json())
+        //                 .then(data => {
+        //                     console.log('Server response:', data);
+        //                     closeModal();
+
+        //                     if (data.success) {
+        //                         showBookingMessage(data.message, 'success');
+
+        //                         pickupDateInput.value = '';
+        //                         returnDateInput.value = '';
+
+        //                         document.getElementById('total-container').style.display = 'none';
+
+        //                         pickupDateInput.disabled = true;
+        //                         returnDateInput.disabled = true;
+        //                         document.querySelector('.book-button').textContent = 'Booked!';
+        //                         document.querySelector('.book-button').disabled = true;
+
+        //                         setTimeout(() => {
+        //                             window.location.href = '/booking-confirmation?id=' + data.booking_id;
+        //                         }, 2000);
+        //                     } else {
+        //                         showBookingMessage(data.message, 'error');
+        //                         submitButton.textContent = originalButtonText;
+        //                         submitButton.disabled = false;
+        //                     }
+        //                 })
+        //                 .catch(error => {
+        //                     console.error('Error:', error);
+        //                     closeModal();
+        //                     showBookingMessage('An error occurred. Please try again.', 'error');
+        //                     submitButton.textContent = originalButtonText;
+        //                     submitButton.disabled = false;
+        //                 });
+        //         });
+        //     }
+
+        //     function showBookingMessage(message, type) {
+        //         const bookingForm = document.getElementById('booking-form');
+        //         let messageContainer = document.getElementById('booking-message');
+
+        //         if (!messageContainer) {
+        //             messageContainer = document.createElement('div');
+        //             messageContainer.id = 'booking-message';
+        //             bookingForm.insertBefore(messageContainer, bookingForm.firstChild);
+        //         }
+
+        //         if (type === 'success') {
+        //             messageContainer.className = 'success-message';
+        //         } else if (type === 'error') {
+        //             messageContainer.className = 'error-message';
+        //         } else if (type === 'info') {
+        //             messageContainer.className = 'info-message';
+        //         }
+
+        //         messageContainer.textContent = message;
+
+        //         if (type !== 'error') {
+        //             setTimeout(() => {
+        //                 messageContainer.style.opacity = '0';
+        //                 setTimeout(() => {
+        //                     if (messageContainer.parentNode) {
+        //                         messageContainer.parentNode.removeChild(messageContainer);
+        //                     }
+        //                 }, 500);
+        //             }, 1000);
+        //         }
+        //     }
+
+        //     window.openModal = openModal;
+        //     window.closeModal = closeModal;
+
+        //     if (document.readyState === 'loading') {
+        //         document.addEventListener('DOMContentLoaded', () => {
+        //             initPriceCalculator();
+        //             initBookingForm();
+        //         });
+        //     } else {
+        //         initPriceCalculator();
+        //         initBookingForm();
+        //     }
+        // })();
+
         window.carDailyRate = <?= json_encode($car['daily_rate']) ?>;
 
         (function() {
@@ -462,6 +728,42 @@ $conn->close();
                 return true;
             }
 
+            function checkUserVerification(callback) {
+                showBookingMessage('', 'info');
+
+                fetch('/php/book-car.php?check_verification=1')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (data.is_verified) {
+                                if (callback) callback();
+                            } else {
+                                let message = 'Please complete your account setup and verification before booking a car.';
+
+                                if (data.verified_status === 'pending') {
+                                    message = 'Your account verification is pending. Please complete your profile to book a car.';
+                                } else if (data.verified_status === 'not_verified' || !data.verified_status) {
+                                    message = 'Your account is not verified. Please complete your profile verification to book a car.';
+                                }
+
+                                showBookingMessage(message, 'error');
+
+                                setTimeout(() => {
+                                    if (typeof openProfileModal === 'function') {
+                                        // openProfileModal();
+                                    }
+                                }, 1500);
+                            }
+                        } else {
+                            showBookingMessage('Error checking verification status', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showBookingMessage('An error occurred while checking verification status', 'error');
+                    });
+            }
+
             function checkCarAvailability(callback) {
                 const carId = document.querySelector('input[name="car_id"]').value;
                 const pickupDate = document.getElementById('pickup_date').value;
@@ -490,8 +792,10 @@ $conn->close();
 
             function openModal() {
                 if (validateBookingForm()) {
-                    checkCarAvailability(function() {
-                        document.querySelector('.bookOverlay').style.display = 'flex';
+                    checkUserVerification(function() {
+                        checkCarAvailability(function() {
+                            document.querySelector('.bookOverlay').style.display = 'flex';
+                        });
                     });
                 }
             }
@@ -506,7 +810,6 @@ $conn->close();
 
                 bookingForm.id = 'booking-form';
 
-                // Remove the default form submission to prevent conflicts
                 bookingForm.onsubmit = function(e) {
                     e.preventDefault();
                 };
@@ -547,8 +850,7 @@ $conn->close();
                 formData.append('return_date', returnDateInput.value);
                 formData.append('total_price', totalPrice);
                 formData.append('has_agreed', termsCheckbox.checked);
-
-                // Debug what's being sent
+                
                 console.log('Sending booking data:', {
                     car_id: document.querySelector('input[name="car_id"]').value,
                     pickup_date: pickupDateInput.value,
@@ -584,7 +886,19 @@ $conn->close();
                                     window.location.href = '/booking-confirmation?id=' + data.booking_id;
                                 }, 2000);
                             } else {
-                                showBookingMessage(data.message, 'error');
+                                
+                                if (data.verification_required) {
+                                    showBookingMessage(data.message, 'error');
+
+                                    setTimeout(() => {
+                                        if (typeof openProfileModal === 'function') {
+                                            openProfileModal();
+                                        }
+                                    }, 1500);
+                                } else {
+                                    showBookingMessage(data.message, 'error');
+                                }
+
                                 submitButton.textContent = originalButtonText;
                                 submitButton.disabled = false;
                             }
@@ -608,6 +922,8 @@ $conn->close();
                     messageContainer.id = 'booking-message';
                     bookingForm.insertBefore(messageContainer, bookingForm.firstChild);
                 }
+
+                messageContainer.innerHTML = '';
 
                 if (type === 'success') {
                     messageContainer.className = 'success-message';
@@ -643,7 +959,7 @@ $conn->close();
                 initPriceCalculator();
                 initBookingForm();
             }
-        })();
+        })()
     </script>
 </body>
 
