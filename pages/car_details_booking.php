@@ -232,7 +232,7 @@ $conn->close();
                                     </li>
 
                                     <li>
-                                        <strong>4. Rental Period</strong>
+                                        <strong>4. Vehicle Use</strong>
                                         <ul>
                                             <li>The renter agrees to use the vehicle only for lawful purposes.</li>
                                             <li>The vehicle must not be used for racing, towing, or any illegal activity.</li>
@@ -354,7 +354,7 @@ $conn->close();
             changeMainImage(imgSrc, currentIndex);
         });
 
-        
+
         function recordAgreement(callback) {
             const formData = new FormData();
             formData.append('record_agreement', 1);
@@ -375,7 +375,6 @@ $conn->close();
                 })
                 .catch(error => {
                     console.error('Error recording agreement:', error);
-                    // Continue with booking even if agreement recording fails
                     if (callback) callback();
                 });
         }
@@ -470,7 +469,6 @@ $conn->close();
 
                 showBookingMessage('Checking car availability...', 'info');
 
-                // AJAX request to check availability
                 fetch(`/php/book-car.php?check_availability=1&car_id=${carId}&pickup_date=${pickupDate}&return_date=${returnDate}`)
                     .then(response => response.json())
                     .then(data => {
@@ -513,18 +511,15 @@ $conn->close();
                     e.preventDefault();
                 };
 
-                // Add click handler for Reserve Now button
                 const reserveButton = bookingForm.querySelector('.book-button');
                 reserveButton.type = 'button';
                 reserveButton.onclick = openModal;
 
-                // Add listener for the confirm button in the modal
                 const confirmButton = document.getElementById('submitBtn');
                 confirmButton.addEventListener('click', function() {
                     submitBooking();
                 });
 
-                // Add checkbox listener to enable/disable confirm button
                 const termsCheckbox = document.getElementById('termsCheckbox');
                 termsCheckbox.addEventListener('change', function() {
                     document.getElementById('submitBtn').disabled = !this.checked;

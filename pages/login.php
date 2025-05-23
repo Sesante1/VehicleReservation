@@ -1,64 +1,48 @@
-<?php
-session_start();
-include_once "php/config.php";
+<!-- <!DOCTYPE html>
+<html lang="en">
 
-include_once 'php/singup_google.php';
-?>
-
-<!-- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="../style/login.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veehive</title>
+    <link rel="stylesheet" href="../style/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
 </head>
 
 <body> -->
+
+<?php
+include_once '../php/login_google.php';
+?>
+
 <div class="wrapper">
-  <section class="form signup">
-    <header>
-      <h1>Create an account</h1>
-      <p>
-        Create your account, it takes less than a <br>
-        minute
-      </p>
-    </header>
-    <form action="#" method="POST" enctype="multipart/form-data" autocomplete="off">
-      <div class="error-text"></div>
-      <div class="name-details">
-        <div class="field input">
-          <label>First Name</label>
-
-          <input type="text" name="fname" placeholder="First name" required>
-        </div>
-        <div class="field input">
-          <label>Last Name</label>
-
-          <input type="text" name="lname" placeholder="Last name" required>
-        </div>
-      </div>
-      <div class="field input">
-        <label>Email Address</label>
-
-        <input type="text" name="email" placeholder="Enter your email" required>
-      </div>
-      <div class="field input">
-        <label>Password</label>
-
-        <input type="password" name="password" placeholder="Enter new password" required>
-        <i class="fas fa-eye"></i>
-      </div>
-      <!-- <div class="field image">
-        <label>Select Image</label>
-        <input type="file" name="image" accept="image/x-png,image/gif,image/jpeg,image/jpg" required>
-      </div> -->
-      <div class="field button">
-        <input type="submit" name="submit" value="Continue">
-      </div>
-    </form>
-    <div class="link">Already signed up? <a href="/login">Login now</a></div>
+    <div class="login-container">
+        <section class="form login">
+            <header>
+                <h1>Welcome back</h1>
+                <p>We are happy to see you again. Enter
+                    <br>your email address and password
+                </p>
+            </header>
+            <form action="#" method="POST" enctype="multipart/form-data" autocomplete="off">
+                <div class="error-text"></div>
+                <div class="field input">
+                    <label>Email Address</label>
+                    <input type="text" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="field input">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Enter your password" required>
+                    <i class="fas fa-eye eye-icon"></i>
+                </div>
+                <div class="field button">
+                    <input type="submit" name="submit" value="SIGN IN">
+                </div>
+            </form>
+            <div class="link">Don't have an account? <a href="/signup">Signup</a></div>
             <div class="social-message">
                 <div class="line"></div>
-                <p class="message">Signup with google</p>
+                <p class="message">Login with google</p>
                 <div class="line"></div>
             </div>
             <div class="flex-row">
@@ -100,9 +84,12 @@ include_once 'php/singup_google.php';
                         Google
                     </button>
                 </a>
-  </section>
-</div>
 
+        </section>
+    </div>
+</div>
 <script src="javascript/pass-show-hide.js"></script>
-<script src="javascript/signup.js"></script>
-</body>
+<script src="javascript/login.js"></script>
+<!-- </body>
+
+</html> -->

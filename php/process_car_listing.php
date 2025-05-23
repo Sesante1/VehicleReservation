@@ -295,7 +295,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($imageCount < 3) {
-            // Rollback transaction if not enough images
             $db->rollBack();
 
             foreach ($imagePaths as $path) {

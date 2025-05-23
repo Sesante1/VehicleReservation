@@ -127,10 +127,6 @@
         justify-content: center;
     }
 
-    /* Submit button */
-    
-
-    /* Success/Error messages */
     .message {
         padding: 15px;
         border-radius: 5px;

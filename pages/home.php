@@ -1,5 +1,5 @@
 <!-- <?php
-        require '../php/config.php'; // Include DB connection
+        require '../php/config.php'; 
 
         $sql = "SELECT 
             cars.id AS car_id,
@@ -31,6 +31,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style/general.css">
+    <link rel="stylesheet" href="../style/footer.css">
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -87,7 +88,7 @@
 
         </div>
         <?php
-        include_once "../footer.php";
+        include "../footer.php";
         ?>
     </div>
     <script>
@@ -150,5 +151,4 @@
     </script>
 
 </body>
-
 </html>

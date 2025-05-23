@@ -12,7 +12,6 @@
         let newCrImage = null;
         let car_id = null;
 
-        // Initialize the page immediately since DOM is already loaded
         function init() {
             const urlParams = new URLSearchParams(window.location.search);
             car_id = urlParams.get('id');
@@ -28,9 +27,7 @@
             setupEventListeners();
         }
 
-        // Setup event listeners with proper cleanup
         function setupEventListeners() {
-            // Clean up any existing listeners first
             cleanupEventListeners();
 
             // Car images
@@ -43,7 +40,8 @@
             const updateForm = document.getElementById('UpdateCarForm');
 
             if (carAddBtn) {
-                carAddBtn.addEventListener('click', function () {
+                carAddBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
                     carFileInput.click();
                 });
             }
@@ -56,7 +54,8 @@
 
             // OR document
             if (orAddBtn) {
-                orAddBtn.addEventListener('click', function () {
+                orAddBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
                     orFileInput.click();
                 });
             }
@@ -72,7 +71,8 @@
 
             // CR document
             if (crAddBtn) {
-                crAddBtn.addEventListener('click', function () {
+                crAddBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
                     crFileInput.click();
                 });
             }
@@ -86,17 +86,20 @@
                 });
             }
 
-            // Form submission
             if (updateForm) {
                 updateForm.addEventListener('submit', function (e) {
                     e.preventDefault();
-                    updateCar();
+                    console.log('Form submission triggered');
+                    
+                    if (validateForm()) {
+                        updateCar();
+                    }
                 });
             }
         }
 
         function cleanupEventListeners() {
-            // Clear file inputs
+
             const carFileInput = document.getElementById('car-file-input');
             const orFileInput = document.getElementById('or-file-input');
             const crFileInput = document.getElementById('cr-file-input');
@@ -105,19 +108,53 @@
             if (orFileInput) orFileInput.value = '';
             if (crFileInput) crFileInput.value = '';
 
-            // Reset arrays
-            existingImages = [];
-            newCarImages = [];
-            imagesToDelete = [];
-            newOrImage = null;
-            newCrImage = null;
         }
 
-        // Load existing car data
+        function validateForm() {
+            const requiredFields = ['make', 'model', 'year', 'car_type', 'description', 'daily_rate', 'location', 'transmission', 'seats'];
+            let isValid = true;
+            let firstErrorField = null;
+
+            requiredFields.forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                if (field && (!field.value || field.value.trim() === '')) {
+                    isValid = false;
+                    field.style.borderColor = '#ff6b6b';
+                    if (!firstErrorField) {
+                        firstErrorField = field;
+                    }
+                } else if (field) {
+                    field.style.borderColor = '';
+                }
+            });
+
+            const totalImages = existingImages.length + newCarImages.length - imagesToDelete.length;
+            if (totalImages < 3) {
+                showMessage('Please ensure you have at least 3 car images', 'error');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                if (firstErrorField) {
+                    firstErrorField.focus();
+                }
+                showMessage('Please fill in all required fields', 'error');
+            }
+
+            return isValid;
+        }
+
         async function loadCarData(carId) {
             try {
+                console.log('Loading car data for ID:', carId);
                 const response = await fetch(`/php/get-car-details.php?id=${carId}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
+                console.log('Car data received:', data);
 
                 if (data.success) {
                     populateForm(data.car);
@@ -128,11 +165,10 @@
                 }
             } catch (error) {
                 console.error('Error loading car data:', error);
-                showMessage('Error loading car data', 'error');
+                showMessage('Error loading car data: ' + error.message, 'error');
             }
         }
 
-        // Populate form with existing data
         function populateForm(car) {
             console.log('Populating form with:', car);
 
@@ -144,48 +180,46 @@
 
             fields.forEach(field => {
                 const element = document.getElementById(field);
-                if (element && car[field] !== undefined) {
+                if (element && car[field] !== undefined && car[field] !== null) {
                     element.value = car[field];
                 }
             });
 
-            // Handle features
             if (car.features) {
                 let features;
                 try {
                     features = typeof car.features === 'string' ? JSON.parse(car.features) : car.features;
 
-                    features.forEach(feature => {
-                        const checkbox = document.querySelector(`input[name="${feature}"]`);
-                        if (checkbox) {
-                            checkbox.checked = true;
-                        }
-                    });
+                    if (Array.isArray(features)) {
+                        features.forEach(feature => {
+                            const checkbox = document.querySelector(`input[name="${feature}"]`);
+                            if (checkbox) {
+                                checkbox.checked = true;
+                            }
+                        });
+                    }
                 } catch (e) {
                     console.error('Error parsing features:', e);
                 }
             }
         }
 
-        // Load existing images
         function loadExistingImages(images) {
             existingImages = images || [];
             const gallery = document.getElementById('car-image-gallery');
             const addButton = gallery.querySelector('.add-image-container');
 
-            // Remove existing previews
             const existingPreviews = gallery.querySelectorAll('.image-preview');
             existingPreviews.forEach(preview => preview.remove());
 
             existingImages.forEach(image => {
-                const imagePreview = createImagePreview(`/php/car-images/${car_id}/${image.image_path}`, image.image_id, true);
+                const imagePreview = createImagePreview(`/php/car-images/${car_id}/${image.image_path}`, image.image_id || image.id, true);
                 gallery.insertBefore(imagePreview, addButton);
             });
 
             updateCarImageCount();
         }
 
-        // Load existing documents
         function loadExistingDocuments(documents) {
             documents = documents || [];
 
@@ -222,19 +256,22 @@
             });
 
             updateCarImageCount();
+
+            document.getElementById('car-file-input').value = '';
         }
 
         function createImagePreview(src, imageId, isExisting) {
             const div = document.createElement('div');
             div.className = 'image-preview';
             div.innerHTML = `
-                    <img src="${src}" alt="Car image">
-                    <button type="button" class="remove-btn" data-image-id="${imageId || ''}" data-existing="${isExisting}">
-                        <i class="fa-solid fa-times"></i>
-                    </button>
-                `;
+                <img src="${src}" alt="Car image">
+                <button type="button" class="remove-btn" data-image-id="${imageId || ''}" data-existing="${isExisting}">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            `;
 
-            div.querySelector('.remove-btn').addEventListener('click', function () {
+            div.querySelector('.remove-btn').addEventListener('click', function (e) {
+                e.preventDefault();
                 removeCarImage(this, imageId, isExisting);
             });
 
@@ -245,13 +282,14 @@
             const div = document.createElement('div');
             div.className = 'document-preview';
             div.innerHTML = `
-                    <img src="${src}" alt="${type} document">
-                    <button type="button" class="remove-btn">
-                        <i class="fa-solid fa-times"></i>
-                    </button>
-                `;
+                <img src="${src}" alt="${type} document">
+                <button type="button" class="remove-btn">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            `;
 
-            div.querySelector('.remove-btn').addEventListener('click', function () {
+            div.querySelector('.remove-btn').addEventListener('click', function (e) {
+                e.preventDefault();
                 removeDocument(type);
             });
 
@@ -260,15 +298,16 @@
 
         function removeCarImage(button, imageId, isExisting) {
             const preview = button.closest('.image-preview');
-            const index = Array.from(preview.parentNode.children).indexOf(preview);
+            const allPreviews = Array.from(preview.parentNode.querySelectorAll('.image-preview'));
+            const index = allPreviews.indexOf(preview);
 
             preview.remove();
 
             if (isExisting && imageId) {
                 imagesToDelete.push(imageId);
             } else {
-                // Calculate the correct index in newCarImages array
-                const newImageIndex = index - existingImages.length + imagesToDelete.length;
+                const existingCount = existingImages.length - imagesToDelete.length;
+                const newImageIndex = index - existingCount;
                 if (newImageIndex >= 0 && newImageIndex < newCarImages.length) {
                     newCarImages.splice(newImageIndex, 1);
                 }
@@ -328,25 +367,32 @@
         }
 
         async function updateCar() {
+            console.log('Starting car update process...');
             const form = document.getElementById('UpdateCarForm');
             const formData = new FormData(form);
 
-            // Add new car images
+            console.log('Form data being sent:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+
             newCarImages.forEach((file, index) => {
                 formData.append(`carImage_${index}`, file);
+                console.log(`Added carImage_${index}:`, file.name);
             });
 
-            // Add new documents
             if (newOrImage) {
                 formData.append('orImage', newOrImage);
+                console.log('Added OR image:', newOrImage.name);
             }
             if (newCrImage) {
                 formData.append('crImage', newCrImage);
+                console.log('Added CR image:', newCrImage.name);
             }
 
-            // Add images to delete
             if (imagesToDelete.length > 0) {
                 formData.append('imagesToDelete', JSON.stringify(imagesToDelete));
+                console.log('Images to delete:', imagesToDelete);
             }
 
             const submitButton = form.querySelector('.submit');
@@ -356,24 +402,49 @@
             submitButton.disabled = true;
 
             try {
+                console.log('Sending request to /php/update-car.php');
                 const response = await fetch('/php/update-car.php', {
                     method: 'POST',
                     body: formData
                 });
 
-                const data = await response.json();
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const responseText = await response.text();
+                console.log('Raw response:', responseText);
+
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    console.error('Failed to parse JSON response:', e);
+                    throw new Error('Invalid JSON response from server');
+                }
+
+                console.log('Parsed response data:', data);
 
                 if (data.success) {
                     showMessage('Car updated successfully!', 'success');
+
+                    newCarImages = [];
+                    imagesToDelete = [];
+                    newOrImage = null;
+                    newCrImage = null;
+                    
                     setTimeout(() => {
                         loadCarData(car_id);
+                        location.href = "/Cars";
                     }, 1000);
                 } else {
                     showMessage(data.message || 'Failed to update car', 'error');
                 }
             } catch (error) {
                 console.error('Error updating car:', error);
-                showMessage('Error updating car', 'error');
+                showMessage('Error updating car: ' + error.message, 'error');
             } finally {
                 submitButton.textContent = originalText;
                 submitButton.classList.remove('loading');
@@ -382,33 +453,57 @@
         }
 
         function showMessage(message, type) {
-            const messageDiv = document.getElementById('message');
-            if (messageDiv) {
-                messageDiv.textContent = message;
-                messageDiv.className = `message ${type}`;
-                messageDiv.style.display = 'block';
+            console.log('Showing message:', message, type);
 
-                setTimeout(() => {
-                    messageDiv.style.display = 'none';
-                }, 5000);
+            let messageDiv = document.getElementById('message');
+            if (!messageDiv) {
+                messageDiv = document.createElement('div');
+                messageDiv.id = 'message';
+                messageDiv.style.cssText = `
+                    padding: 10px;
+                    margin: 10px 0;
+                    border-radius: 5px;
+                    font-weight: bold;
+                    text-align: center;
+                `;
+
+                const form = document.getElementById('UpdateCarForm');
+                if (form) {
+                    form.insertBefore(messageDiv, form.firstChild);
+                }
             }
+
+            messageDiv.textContent = message;
+            messageDiv.className = `message ${type}`;
+            
+            if (type === 'success') {
+                messageDiv.style.backgroundColor = '#d4edda';
+                messageDiv.style.color = '#155724';
+                messageDiv.style.border = '1px solid #c3e6cb';
+            } else if (type === 'error') {
+                messageDiv.style.backgroundColor = '#f8d7da';
+                messageDiv.style.color = '#721c24';
+                messageDiv.style.border = '1px solid #f5c6cb';
+            }
+            
+            messageDiv.style.display = 'block';
+
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
         }
 
-        // Initialize the page
         init();
 
-        // Clean up function for SPA navigation
         window.cleanupUpdateCarPage = function () {
             window.updateCarPageInitialized = false;
             cleanupEventListeners();
         };
     }
 
-    // Initialize when the script loads
     initUpdateCarPage();
 
-    // Global function for back button (if needed)
-    function goBack() {
+    window.goBack = function() {
         window.history.back();
-    }
+    };
 })();

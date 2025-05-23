@@ -17,7 +17,8 @@ try {
 	die("Connection failed: " . $e->getMessage());
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+// Handle car approval/decline
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_POST['car_id'])) {
 	header('Content-Type: application/json');
 
 	$car_id = (int)$_POST['car_id'];
@@ -47,6 +48,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 	exit;
 }
 
+// Handle user approval/decline
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_POST['user_id'])) {
+	header('Content-Type: application/json');
+
+	$user_id = (int)$_POST['user_id'];
+	$action = $_POST['action'];
+
+	if ($action === 'approve_user') {
+		$status = 'verified';
+	} elseif ($action === 'decline_user') {
+		$status = 'declined';
+	} else {
+		echo json_encode(['success' => false, 'message' => 'Invalid action']);
+		exit;
+	}
+
+	try {
+		$stmt = $pdo->prepare("UPDATE users SET verified = ? WHERE user_id = ?");
+		$result = $stmt->execute([$status, $user_id]);
+
+		if ($result) {
+			echo json_encode(['success' => true, 'message' => 'User status updated successfully']);
+		} else {
+			echo json_encode(['success' => false, 'message' => 'Failed to update user status']);
+		}
+	} catch (PDOException $e) {
+		echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+	}
+	exit;
+}
+
+// Get car details
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['get_car_details'])) {
 	header('Content-Type: application/json');
 
@@ -89,6 +122,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['get_car_details'])) {
 	exit;
 }
 
+// Get user details
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['get_user_details'])) {
+	header('Content-Type: application/json');
+
+	$user_id = (int)$_GET['user_id'];
+
+	try {
+		$stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = ?");
+		$stmt->execute([$user_id]);
+		$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+		if (!$user) {
+			echo json_encode(['success' => false, 'message' => 'User not found']);
+			exit;
+		}
+
+		// Get driver license photos
+		$stmt = $pdo->prepare("SELECT * FROM user_driver_licenses WHERE user_id = ?");
+		$stmt->execute([$user_id]);
+		$license_data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+		echo json_encode([
+			'success' => true,
+			'user' => $user,
+			'license' => $license_data
+		]);
+	} catch (PDOException $e) {
+		echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+	}
+	exit;
+}
+
+// Fetch pending cars
 try {
 	$stmt = $pdo->prepare("
         SELECT c.id, c.make, c.model, c.year, c.created_at, c.verified,
@@ -104,6 +170,54 @@ try {
 	$pending_cars = [];
 	$error_message = "Error fetching cars: " . $e->getMessage();
 }
+
+// Fetch pending users
+try {
+	$stmt = $pdo->prepare("
+        SELECT user_id, fname, lname, email, img, phone, created_at, verified, date_of_birth, driver_license_number
+        FROM users
+        WHERE verified = 'Pending'
+        ORDER BY created_at DESC
+    ");
+	$stmt->execute();
+	$pending_users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+	$pending_users = [];
+	$user_error_message = "Error fetching users: " . $e->getMessage();
+}
+
+// Fetch all users
+try {
+	$stmt = $pdo->prepare("
+        SELECT user_id, fname, lname, email, img, phone, created_at, verified, date_of_birth, driver_license_number
+        FROM users
+        ORDER BY created_at DESC
+    ");
+	$stmt->execute();
+	$all_users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+	$all_users = [];
+	$user_error_message = "Error fetching users: " . $e->getMessage();
+}
+
+// Get user counts for dashboard
+try {
+	$stmt = $pdo->prepare("SELECT COUNT(*) as total_users FROM users");
+	$stmt->execute();
+	$total_users = $stmt->fetch(PDO::FETCH_ASSOC)['total_users'];
+
+	$stmt = $pdo->prepare("SELECT COUNT(*) as pending_users FROM users WHERE verified IS NULL OR verified = 'pending'");
+	$stmt->execute();
+	$pending_users_count = $stmt->fetch(PDO::FETCH_ASSOC)['pending_users'];
+
+	$stmt = $pdo->prepare("SELECT COUNT(*) as pending_cars FROM cars WHERE verified = 'pending'");
+	$stmt->execute();
+	$pending_cars_count = $stmt->fetch(PDO::FETCH_ASSOC)['pending_cars'];
+} catch (PDOException $e) {
+	$total_users = 0;
+	$pending_users_count = 0;
+	$pending_cars_count = 0;
+}
 ?>
 
 <!DOCTYPE html>
@@ -113,9 +227,7 @@ try {
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<!-- Boxicons -->
 	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
-	<!-- My CSS -->
 	<link rel="stylesheet" href="style/admin.css">
 	<link
 		rel="stylesheet"
@@ -124,7 +236,6 @@ try {
 </head>
 
 <body>
-	<!-- SIDEBAR -->
 	<section id="sidebar">
 		<a href="#" class="brand">
 			<span class="text">Veehive</span>
@@ -138,7 +249,13 @@ try {
 			</li>
 			<li class="tab-item" data-tab="users">
 				<a>
-					<i class='bx bxs-dashboard'></i>
+					<i class='bx bxs-user'></i>
+					<span class="text">Pending Users</span>
+				</a>
+			</li>
+			<li class="tab-item" data-tab="totalUsers">
+				<a>
+					<i class='bx bxs-user'></i>
 					<span class="text">Users</span>
 				</a>
 			</li>
@@ -158,11 +275,8 @@ try {
 			</li>
 		</ul>
 	</section>
-	<!-- SIDEBAR -->
 
-	<!-- CONTENT -->
 	<section id="content">
-		<!-- NAVBAR -->
 		<nav>
 			<i class='bx bx-menu'></i>
 			<div class="profile-container">
@@ -197,24 +311,23 @@ try {
 
 				<ul class="box-info">
 					<li>
-						<!-- <i class='bx bxs-calendar-check'></i> -->
 						<i class='bx bxs-group'></i>
 						<span class="text">
-							<h3>1020</h3>
+							<h3><?php echo $total_users; ?></h3>
 							<p>Total users</p>
 						</span>
 					</li>
 					<li>
-						<i class='bx bxs-group'></i>
+						<i class='bx bxs-user-check'></i>
 						<span class="text">
-							<h3>2834</h3>
+							<h3><?php echo $pending_users_count; ?></h3>
 							<p>Pending users</p>
 						</span>
 					</li>
 					<li>
-						<i class='bx bxs-dollar-circle'></i>
+						<i class='bx bxs-car'></i>
 						<span class="text">
-							<h3>2543</h3>
+							<h3><?php echo $pending_cars_count; ?></h3>
 							<p>Pending Cars</p>
 						</span>
 					</li>
@@ -250,7 +363,7 @@ try {
 							<tbody id="carsTableBody">
 								<?php if (empty($pending_cars)): ?>
 									<tr>
-										<td colspan="4" style="text-align: center; color: #666; padding: 20px;">
+										<td colspan="5" style="text-align: center; color: #666; padding: 20px;">
 											No pending cars found
 										</td>
 									</tr>
@@ -290,21 +403,111 @@ try {
 					</div>
 				</div>
 			</main>
-
 		</div>
 
 		<div id="users" class="tab-content">
 			<main>
 				<div class="head-title">
 					<div class="left">
-						<h1>Admin Dashboard</h1>
+						<h1>Pending Users</h1>
 						<ul class="breadcrumb">
 							<li>
-								<a href="/testing">Pending Users</a>
+								<a href="/testing">Users</a>
 							</li>
 							<li><i class='bx bx-chevron-right'></i></li>
 							<li>
-								<a class="active">Home</a>
+								<a class="active">Pending</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="table-data">
+					<div class="order">
+						<div class="head">
+							<h3>Pending Users</h3>
+							<form action="#" id="userSearchForm">
+								<div class="form-input">
+									<input type="search" placeholder="Search..." id="userSearchInput">
+									<button type="submit" class="search-btn"><i class='bx bx-search'></i></button>
+								</div>
+							</form>
+							<i class='bx bx-filter'></i>
+						</div>
+
+						<?php if (isset($user_error_message)): ?>
+							<div class="error-message"><?php echo htmlspecialchars($user_error_message); ?></div>
+						<?php endif; ?>
+
+						<table>
+							<thead>
+								<tr>
+									<th>User</th>
+									<th>Email</th>
+									<th>Phone</th>
+									<th>Created at</th>
+									<th>Status</th>
+								</tr>
+							</thead>
+							<tbody id="usersTableBody">
+								<?php if (empty($pending_users)): ?>
+									<tr>
+										<td colspan="5" style="text-align: center; color: #666; padding: 20px;">
+											No pending users found
+										</td>
+									</tr>
+								<?php else: ?>
+									<?php foreach ($pending_users as $user): ?>
+										<tr onclick="openUserModal(<?php echo $user['user_id']; ?>)" data-user-id="<?php echo $user['user_id']; ?>">
+											<td>
+												<img src="<?php echo !empty($user['img']) ? 'php/images/' . htmlspecialchars($user['img']) : 'php/images/default-profile.jpg'; ?>" alt="Profile">
+												<p><?php echo htmlspecialchars($user['fname'] . ' ' . $user['lname']); ?></p>
+											</td>
+											<td><?php echo htmlspecialchars($user['email']); ?></td>
+											<td><?php echo htmlspecialchars($user['phone'] ?? 'N/A'); ?></td>
+											<td><?php echo date('d-m-Y', strtotime($user['created_at'])); ?></td>
+											<td>
+												<span class="status <?php echo strtolower($user['verified'] ?? 'Pending'); ?>">
+													<?php echo ucfirst($user['verified'] ?? 'Pending'); ?>
+												</span>
+											</td>
+										</tr>
+									<?php endforeach; ?>
+								<?php endif; ?>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+
+			</main>
+		</div>
+
+		<!-- User Details Modal -->
+		<div id="userModal" class="modal">
+			<div class="modal-content" style="font-family: 'Poppins', sans-serif;">
+				<span class="close" id="userModalClose">&times;</span>
+				<div class="modal-header">
+					<h2 id="userModalTitle">User Details</h2>
+				</div>
+				<div id="userModalBody" class="loading">
+					Loading user details...
+				</div>
+			</div>
+		</div>
+
+		<div id="totalUsers" class="tab-content">
+			<main>
+				<div class="head-title">
+					<div class="left">
+						<h1>Pending Users</h1>
+						<ul class="breadcrumb">
+							<li>
+								<a href="/testing">Users</a>
+							</li>
+							<li><i class='bx bx-chevron-right'></i></li>
+							<li>
+								<a class="active">Pending</a>
 							</li>
 						</ul>
 					</div>
@@ -314,72 +517,60 @@ try {
 					<div class="order">
 						<div class="head">
 							<h3>Users</h3>
-							<form action="#">
+							<form action="#" id="userSearchForm">
 								<div class="form-input">
-									<input type="search" placeholder="Search...">
+									<input type="search" placeholder="Search..." id="userSearchInput">
 									<button type="submit" class="search-btn"><i class='bx bx-search'></i></button>
 								</div>
 							</form>
 							<i class='bx bx-filter'></i>
 						</div>
 
+						<?php if (isset($user_error_message)): ?>
+							<div class="error-message"><?php echo htmlspecialchars($user_error_message); ?></div>
+						<?php endif; ?>
+
 						<table>
 							<thead>
 								<tr>
-									<th>Owner</th>
-									<th>Date</th>
+									<th>User</th>
+									<th>Email</th>
+									<th>Phone</th>
+									<th>Created at</th>
 									<th>Status</th>
-									<th>Action</th>
 								</tr>
 							</thead>
-							<tbody>
-								<tr>
-									<td>
-										<img src="php/images/1747052100_profile.jpg">
-										<p>John Doe</p>
-									</td>
-									<td>01-10-2021</td>
-									<td><span class="status completed">Completed</span></td>
-								</tr>
-								<tr>
-									<td>
-										<img src="php/images/1747052100_profile.jpg">
-										<p>John Doe</p>
-									</td>
-									<td>01-10-2021</td>
-									<td><span class="status completed">Pending</span></td>
-								</tr>
-								<tr>
-									<td>
-										<img src="php/images/1747052100_profile.jpg">
-										<p>John Doe</p>
-									</td>
-									<td>01-10-2021</td>
-									<td><span class="status completed">Pending</span></td>
-								</tr>
-								<tr>
-									<td>
-										<img src="php/images/1747052100_profile.jpg">
-										<p>John Doe</p>
-									</td>
-									<td>01-10-2021</td>
-									<td><span class="status pending">Pending</span></td>
-								</tr>
-								<tr>
-									<td>
-										<img src="php/images/1747052100_profile.jpg">
-										<p>John Doe</p>
-									</td>
-									<td>01-10-2021</td>
-									<td><span class="status completed">Completed</span></td>
-								</tr>
+							<tbody id="usersTableBody">
+								<?php if (empty($all_users)): ?>
+									<tr>
+										<td colspan="5" style="text-align: center; color: #666; padding: 20px;">
+											No pending users found
+										</td>
+									</tr>
+								<?php else: ?>
+									<?php foreach ($all_users as $users): ?>
+										<tr onclick="openUserModal(<?php echo $users['user_id']; ?>)" data-user-id="<?php echo $users['user_id']; ?>">
+											<td>
+												<img src="<?php echo !empty($users['img']) ? 'php/images/' . htmlspecialchars($users['img']) : 'php/images/default-profile.jpg'; ?>" alt="Profile">
+												<p><?php echo htmlspecialchars($users['fname'] . ' ' . $users['lname']); ?></p>
+											</td>
+											<td><?php echo htmlspecialchars($users['email']); ?></td>
+											<td><?php echo htmlspecialchars($users['phone'] ?? 'N/A'); ?></td>
+											<td><?php echo date('d-m-Y', strtotime($users['created_at'])); ?></td>
+											<td>
+												<span class="status <?php echo strtolower($users['verified'] ?? 'Pending'); ?>">
+													<?php echo ucfirst($users['verified'] ?? 'Pending'); ?>
+												</span>
+											</td>
+										</tr>
+									<?php endforeach; ?>
+								<?php endif; ?>
 							</tbody>
 						</table>
 					</div>
 				</div>
 			</main>
 		</div>
-
 	</section>
 
 	<script>
@@ -399,267 +590,7 @@ try {
 		});
 	</script>
 
-	<script>
-		(function() {
-			// Modal functionality
-			let modal = document.getElementById('carModal');
-			let modalBody = document.getElementById('modalBody');
-			let modalTitle = document.getElementById('modalTitle');
-			let closeBtn = document.getElementsByClassName('close')[0];
-
-			closeBtn.onclick = function() {
-				modal.style.display = 'none';
-			}
-
-			window.onclick = function(event) {
-				if (event.target == modal) {
-					modal.style.display = 'none';
-				}
-			}
-
-			window.openCarModal = function(carId) {
-				modal.style.display = 'block';
-				modalBody.innerHTML = '<div class="loading">Loading car details...</div>';
-
-				fetch(`?get_car_details=1&car_id=${carId}`)
-					.then(response => response.json())
-					.then(data => {
-						if (data.success) {
-							displayCarDetails(data.car, data.images, data.documents);
-						} else {
-							modalBody.innerHTML = `<div class="error-message">Error: ${data.message}</div>`;
-						}
-					})
-					.catch(error => {
-						modalBody.innerHTML = `<div class="error-message">Error loading car details: ${error.message}</div>`;
-					});
-			};
-
-			function displayCarDetails(car, images, documents) {
-				modalTitle.textContent = `${car.make} ${car.model} (${car.year})`;
-
-				let featuresHtml = '';
-				if (car.features && Array.isArray(car.features)) {
-					featuresHtml = car.features.join(', ');
-				} else if (car.features) {
-					featuresHtml = car.features;
-				} else {
-					featuresHtml = 'N/A';
-				}
-
-				let imagesHtml = '';
-				if (images && images.length > 0) {
-					imagesHtml = images.map(img => `
-					<div class="image-item">
-						<img src="php/car-images/${car.id}/${img.image_path}" alt="Car Image" onerror="this.src='php/images/no-image.jpg'">
-					</div>
-					`).join('');
-				} else {
-					imagesHtml = '<p>No images available</p>';
-				}
-
-				let documentsHtml = '';
-				if (documents && documents.length > 0) {
-					documentsHtml = documents.map(doc => `
-						<div class="document-item">
-							<img class="document-img" src="php/documents/${car.id}/${doc.image_path}" alt="${doc.document_type} Document" onerror="this.src='php/images/no-document.jpg'">
-							<div class="document-label">${doc.document_type} Document</div>
-						</div>
-					`).join('');
-				} else {
-					documentsHtml = '<p>No documents available</p>';
-				}
-
-				modalBody.innerHTML = `
-					<div class="car-details-grid">
-						<div class="car-detail-item">
-							<div class="car-detail-label"><i class="fa-solid fa-user"></i> &nbsp;&nbsp;Owner</div>
-							<div class="car-detail-value">${car.fname} ${car.lname}</div>
-						</div>
-						<div class="car-detail-item">
-							<div class="car-detail-label"><i class="fa-solid fa-envelope"></i> &nbsp;&nbsp;Email</div>
-							<div class="car-detail-value">${car.email}</div>
-						</div>
-						<div class="car-detail-item">
-							<div class="car-detail-label"><i class="fa-solid fa-phone"></i> &nbsp;&nbsp;Phone</div>
-							<div class="car-detail-value">${car.phone || 'N/A'}</div>
-						</div>
-						<div class="car-detail-item">
-							<div class="car-detail-label"><i class="fa-solid fa-gas-pump"></i> &nbsp;&nbsp;Car Type</div>
-							<div class="car-detail-value">${car.car_type}</div>
-						</div>
-						<div class="car-detail-item">
-							<div class="car-detail-label"><i class="fa-solid fa-tag"></i> &nbsp;&nbsp;Daily Rate</div>
-							<div class="car-detail-value">₱ ${parseInt(car.daily_rate)}</div>
-						</div>
-						<div class="car-detail-item">
-							<div class="car-detail-label"><i class="fa-solid fa-location-dot"></i> &nbsp;&nbsp;Location</div>
-							<div class="car-detail-value">${car.location}</div>
-						</div>
-						<div class="car-detail-item">
-							<div class="car-detail-label"><i class="fa-solid fa-gears"></i> &nbsp;&nbsp;Transmission</div>
-							<div class="car-detail-value">${car.transmission}</div>
-						</div>
-						<div class="car-detail-item">
-							<div class="car-detail-label"><i class="fa-solid fa-users"></i> &nbsp;&nbsp;Seats</div>
-							<div class="car-detail-value">${car.seats}</div>
-						</div>
-						<div class="car-detail-item">
-							<div class="car-detail-label"><i class="fa-solid fa-calendar-week"></i> &nbsp;&nbsp;Available From</div>
-							<div class="car-detail-value">${car.available_from}</div>
-						</div>
-						<div class="car-detail-item">
-							<div class="car-detail-label"><i class="fa-solid fa-calendar-week"></i> &nbsp;&nbsp;Available Until</div>
-							<div class="car-detail-value">${car.available_until || 'N/A'}</div>
-						</div>
-						<div class="car-detail-item" style="grid-column: 1 / -1;">
-							<div class="car-detail-label">Description</div>
-							<div class="car-detail-value">${car.description}</div>
-						</div>
-						<div class="car-detail-item" style="grid-column: 1 / -1;">
-							<div class="car-detail-label">Features</div>
-							<div class="car-detail-value">${featuresHtml}</div>
-						</div>
-					</div>
-
-					<div class="images-section">
-						<h3>Car Images</h3>
-						<div class="images-grid">
-							${imagesHtml}
-						</div>
-					</div>
-
-					<div class="documents-section">
-						<h3>Car Documents</h3>
-						<div class="documents-grid">
-							${documentsHtml}
-						</div>
-					</div>
-
-					${car.verified === 'Pending' ? `
-					<div class="action-buttons">
-						<button class="btn btn-approve" onclick="approveDeclineCar(${car.id}, 'approve')">
-							<i class="fa-solid fa-check-to-slot"></i> Approve
-						</button>
-						<button class="btn btn-decline" onclick="approveDeclineCar(${car.id}, 'decline')">
-							<i class="fa-solid fa-rectangle-xmark"></i> Decline
-						</button>
-					</div>
-					` : ''}
-				`;
-			}
-
-			window.approveDeclineCar = function(carId, action) {
-				if (!confirm(`Are you sure you want to ${action} this car?`)) {
-					return;
-				}
-
-				const actionButtons = document.querySelector('.action-buttons');
-				actionButtons.innerHTML = '<div class="loading">Processing...</div>';
-
-				fetch('', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/x-www-form-urlencoded',
-						},
-						body: `action=${action}&car_id=${carId}`
-					})
-					.then(response => response.json())
-					.then(data => {
-						if (data.success) {
-							alert(data.message);
-							modal.style.display = 'none';
-							location.reload();
-						} else {
-							alert(`Error: ${data.message}`);
-							actionButtons.innerHTML = `
-                    <button class="btn btn-approve" onclick="approveDeclineCar(${carId}, 'approve')">
-                        <i class='bx bx-check'></i> Approve
-                    </button>
-                    <button class="btn btn-decline" onclick="approveDeclineCar(${carId}, 'decline')">
-                        <i class='bx bx-x'></i> Decline
-                    </button>
-                `;
-						}
-					})
-					.catch(error => {
-						alert(`Error: ${error.message}`);
-						actionButtons.innerHTML = `
-                <button class="btn btn-approve" onclick="approveDeclineCar(${carId}, 'approve')">
-                    <i class='bx bx-check'></i> Approve
-                </button>
-                <button class="btn btn-decline" onclick="approveDeclineCar(${carId}, 'decline')">
-                    <i class='bx bx-x'></i> Decline
-                </button>
-            `;
-					});
-			};
-
-			document.getElementById('searchForm').addEventListener('submit', function(e) {
-				e.preventDefault();
-				performSearch();
-			});
-
-			document.getElementById('searchInput').addEventListener('input', function() {
-				performSearch();
-			});
-
-			function performSearch() {
-				const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-				const rows = document.querySelectorAll('#carsTableBody tr');
-
-				rows.forEach(row => {
-					const owner = row.querySelector('td:first-child p').textContent.toLowerCase();
-					const car = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-
-					if (owner.includes(searchTerm) || car.includes(searchTerm)) {
-						row.style.display = '';
-					} else {
-						row.style.display = 'none';
-					}
-				});
-			}
-			
-
-
-		})();
-		document.addEventListener("click", function(event) {
-
-				if (event.target && event.target.classList.contains("document-img")) {
-					const img = event.target;
-
-					const overlay = document.createElement("div");
-					overlay.style.position = "fixed";
-					overlay.style.top = 0;
-					overlay.style.left = 0;
-					overlay.style.width = "100vw";
-					overlay.style.height = "100vh";
-					overlay.style.backgroundColor = "rgba(0,0,0,0.9)";
-					overlay.style.display = "flex";
-					overlay.style.alignItems = "center";
-					overlay.style.justifyContent = "center";
-					overlay.style.zIndex = 9999;
-
-					const bigImg = document.createElement("img");
-					bigImg.src = img.src;
-					bigImg.style.maxWidth = "90vw";
-					bigImg.style.maxHeight = "90vh";
-					bigImg.style.border = "1px solid white";
-					bigImg.style.borderRadius = "10px";
-
-					overlay.appendChild(bigImg);
-
-					// Close overlay on click
-					overlay.addEventListener("click", () => {
-						overlay.remove();
-					});
-
-					document.body.appendChild(overlay);
-				}
-			});
-	</script>
-
-
+	<script src="javascript/admin.js"></script>
 	<script src="javascript/script.js" defer></script>
 </body>
 

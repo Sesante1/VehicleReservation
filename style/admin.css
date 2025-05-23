@@ -541,7 +541,7 @@ body {
 	font-weight: 700;
 }
 
-#content main .table-data .order table tr td .status.completed {
+#content main .table-data .order table tr td .status.verified {
 	background: var(--blue);
 }
 
@@ -578,7 +578,7 @@ body {
 	cursor: pointer;
 }
 
-#content main .table-data .todo .todo-list li.completed {
+#content main .table-data .todo .todo-list li.verified {
 	border-left: 10px solid var(--blue);
 }
 
@@ -749,6 +749,10 @@ body {
 .documents-section {
 	margin-bottom: 30px;
 }
+
+/* .documents-flex {
+
+} */
 
 .images-grid,
 .documents-grid {

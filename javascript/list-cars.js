@@ -298,7 +298,10 @@ function closeCancelBookingModal() {
                                     <a href="/car-details?id=${car.car_id}" onclick="route()">View Details</a>
                                 </button>
                             </div>
-                            <a class="edit-link" href="/update-car?id=${car.car_id}">Edit Listing</a>
+                            <div class="edit-link">
+                                <a class="edit-link" href="/update-car?id=${car.car_id}">Edit Listing</a>
+                            </div>
+                            
                         </div>
                     `;
                 });
@@ -529,10 +532,10 @@ function closeCancelBookingModal() {
                 const container = document.getElementById('booking-request-list');
                 container.innerHTML = '';
 
-                if (requests.length === 0) {
-                    container.innerHTML = '<p>No booking requests found.</p>';
-                    return;
-                }
+                // if (requests.length === 0) {
+                //     container.innerHTML = '<p>No booking requests found.</p>';
+                //     return;
+                // }
 
                 requests.forEach(request => {
                     container.innerHTML += `

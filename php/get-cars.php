@@ -12,7 +12,7 @@ $sql = "SELECT
             car_images.image_path
         FROM cars
         LEFT JOIN car_images ON cars.id = car_images.car_id AND car_images.is_primary = 1
-        WHERE cars.is_active = 1";
+        WHERE cars.is_active = 1 AND cars.verified = 'approved'";
 
 $result = mysqli_query($conn, $sql);
 
